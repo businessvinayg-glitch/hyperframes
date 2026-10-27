@@ -84,6 +84,19 @@
       <div id="s9" class="clip shot" data-layout-allow-overflow data-start="31.8" data-duration="4.24">
         <img id="s9-img" src="assets/shots/shot-5.jpg" alt="Driver's worried face" style="transform-origin: 68% 38%" />
       </div>
+      <!-- Twist flicker (reference style): mono → negative → mono → negative, then back to colour -->
+      <div id="s9-mono-a" class="clip shot" data-layout-allow-overflow data-start="34.1" data-duration="0.18">
+        <img id="s9-mono-a-img" class="twist-img" src="assets/shots/shot-5-mono.jpg" alt="" style="transform-origin: 68% 38%" />
+      </div>
+      <div id="s9-neg-a" class="clip shot" data-layout-allow-overflow data-start="34.28" data-duration="0.12">
+        <img id="s9-neg-a-img" class="twist-img" src="assets/shots/shot-5-negative.jpg" alt="" style="transform-origin: 68% 38%" />
+      </div>
+      <div id="s9-mono-b" class="clip shot" data-layout-allow-overflow data-start="34.4" data-duration="0.07">
+        <img id="s9-mono-b-img" class="twist-img" src="assets/shots/shot-5-mono.jpg" alt="" style="transform-origin: 68% 38%" />
+      </div>
+      <div id="s9-neg-b" class="clip shot" data-layout-allow-overflow data-start="34.47" data-duration="0.17">
+        <img id="s9-neg-b-img" class="twist-img" src="assets/shots/shot-5-negative.jpg" alt="" style="transform-origin: 68% 38%" />
+      </div>
       <!-- 10. "Do you take the mask or walk away?" + vote card -->
       <div id="s10" class="clip shot" data-layout-allow-overflow data-start="36.04" data-duration="7.43">
         <img id="s10-img" src="assets/shots/shot-4.jpg" alt="Driver deciding over the bag" style="transform-origin: 48% 42%" />
@@ -122,25 +135,24 @@
       tl.to("#shots-buzz", { keyframes: { x: [0, -6, 6, -5, 5, -3, 3, 0] }, duration: 0.36, ease: "none" }, t);
     });
 
-    // THE TWIST (34.28, "I know where you sleep"): snap zoom + camera shake + red wash.
+    // THE TWIST (34.28, "I know where you sleep"): negative flicker (clips above) + snap zoom + short shake.
     const T = 34.28;
-    tl.to("#shots-cam", { scale: 1.14, duration: 0.12, ease: "power4.out" }, T);
-    tl.to("#shots-cam", { scale: 1.06, duration: 0.9, ease: "power2.out" }, T + 0.12);
+    tl.set(".twist-img", { scale: 1.675 }, 0);
+    tl.to("#shots-cam", { scale: 1.1, duration: 0.1, ease: "power4.out" }, T);
+    tl.to("#shots-cam", { scale: 1.04, duration: 0.8, ease: "power2.out" }, T + 0.1);
     tl.to(
       "#shots-cam",
       {
         keyframes: {
-          x: [0, -28, 24, -20, 16, -10, 6, -3, 0],
-          y: [0, 18, -22, 14, -10, 8, -4, 2, 0],
-          rotation: [0, -1.2, 1, -0.8, 0.6, -0.3, 0.2, 0, 0],
+          x: [0, -18, 16, -12, 8, -4, 0],
+          y: [0, 12, -14, 8, -5, 2, 0],
         },
-        duration: 0.55,
+        duration: 0.42,
         ease: "none",
       },
       T,
     );
-    tl.to("#shots-redwash", { opacity: 1, duration: 0.1, ease: "power2.out" }, T);
-    tl.to("#shots-redwash", { opacity: 0.45, duration: 1.2, ease: "power2.out" }, T + 0.1);
+    tl.to("#shots-redwash", { opacity: 0.35, duration: 0.15, ease: "power2.out" }, T + 0.36);
     tl.to("#shots-redwash", { opacity: 0, duration: 0.3, ease: "power2.in" }, 35.7);
     tl.to("#shots-cam", { scale: 1, duration: 0.01, ease: "none" }, 36.03);
 

@@ -1,0 +1,347 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      font-family: "Inter", sans-serif;
+    }
+    /* One beat card per story beat, top of the safe band (reference style:
+       dark box, thin green border, tiny label, big value, green underline). */
+    .card {
+      position: absolute;
+      left: 64px;
+      right: 64px;
+      top: 190px;
+    }
+    .card-low {
+      top: 460px;
+    }
+    .card-box {
+      padding: 26px 36px 30px;
+      border-radius: 22px;
+      background: rgba(10, 12, 11, 0.88);
+      border: 3px solid rgba(74, 222, 128, 0.85);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+      text-align: center;
+    }
+    .card-label {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #e8e8e8;
+      text-transform: uppercase;
+    }
+    .card-value {
+      position: relative;
+      margin-top: 8px;
+      font-size: 84px;
+      font-weight: 900;
+      line-height: 1.05;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .card-sub {
+      margin-top: 10px;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #4ade80;
+      text-transform: uppercase;
+    }
+    .card-bar {
+      width: 70%;
+      height: 6px;
+      margin: 16px auto 0;
+      border-radius: 3px;
+      background: #4ade80;
+      transform-origin: 0% 50%;
+    }
+    .card-red .card-box {
+      border-color: rgba(255, 74, 74, 0.95);
+    }
+    .card-red .card-bar {
+      background: #ff4a4a;
+    }
+    .card-red .card-sub {
+      color: #ff6b6b;
+    }
+    .red {
+      color: #ff4a4a;
+    }
+    /* swap layers: two values in one slot */
+    .swap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+    }
+    /* left-aligned text cards (typed notes, messages) */
+    .card-text .card-box {
+      text-align: left;
+    }
+    .card-text .card-label {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .tick {
+      width: 7px;
+      height: 30px;
+      border-radius: 2px;
+      background: #4ade80;
+    }
+    .typed {
+      margin-top: 18px;
+      font-size: 58px;
+      font-weight: 800;
+      line-height: 1.22;
+      color: #fff;
+      white-space: pre-line;
+      min-height: 72px;
+    }
+    .num {
+      color: #4ade80;
+    }
+    .cursor {
+      display: inline-block;
+      width: 5px;
+      height: 58px;
+      margin-left: 6px;
+      vertical-align: -8px;
+      background: #4ade80;
+    }
+    .call-dot {
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      margin-right: 14px;
+      border-radius: 50%;
+      background: #4ade80;
+      vertical-align: 2px;
+    }
+  </style>
+  <div id="root" data-composition-id="cards" data-width="1080" data-height="1920">
+    <!-- 0.0 "There's a hundred thousand dollars in your back seat." -->
+    <div id="c-found" class="clip card" data-start="0" data-duration="4.06">
+      <div class="card-box">
+        <div class="card-label">You just found</div>
+        <div id="c-found-val" class="card-value">$0</div>
+        <div id="c-found-sub" class="card-sub">In your back seat</div>
+        <div class="card-bar"></div>
+      </div>
+    </div>
+
+    <!-- 4.1 "Your last rider left it... bus station drop off." -->
+    <div id="c-rider" class="clip card" data-start="4.06" data-duration="6.66">
+      <div class="card-box">
+        <div class="card-label">Last rider · drop-off</div>
+        <div class="card-value">BUS STATION</div>
+        <div id="c-rider-sub" class="card-sub">11:31 P.M. · Soaked jacket</div>
+        <div class="card-bar"></div>
+      </div>
+    </div>
+
+    <!-- 10.76 "You're three months behind on rent." -->
+    <div id="c-rent" class="clip card card-red" data-start="10.72" data-duration="5.5">
+      <div class="card-box">
+        <div class="card-label">Rent overdue</div>
+        <div class="card-value"><span id="c-rent-val">0</span> MONTHS</div>
+        <div class="card-bar"></div>
+      </div>
+    </div>
+    <!-- 13.06 "And tonight the landlord changed your door code." -->
+    <div id="c-door" class="clip card card-low" data-start="13.02" data-duration="3.2">
+      <div id="c-door-box" class="card-box">
+        <div class="card-label">Door code</div>
+        <div class="card-value">
+          <span id="c-door-old">• • • •</span><span id="c-door-new" class="swap red">CHANGED</span>
+        </div>
+        <div id="c-door-sub" class="card-sub red">Access denied</div>
+        <div class="card-bar"></div>
+      </div>
+    </div>
+
+    <!-- 16.26 "That bag is four years of rent." -->
+    <div id="c-years" class="clip card" data-start="16.22" data-duration="2.87">
+      <div class="card-box">
+        <div class="card-label">$100,000 in rent</div>
+        <div class="card-value"><span id="c-years-val">0</span> MONTHS</div>
+        <div id="c-years-sub" class="card-sub">≈ 4 years</div>
+        <div class="card-bar"></div>
+      </div>
+    </div>
+    <!-- 19.17 "Maybe a way out." — typed plan -->
+    <div id="c-plan" class="clip card card-text" data-start="19.09" data-duration="2.07">
+      <div class="card-box">
+        <div class="card-label"><span class="tick"></span>Notes</div>
+        <div class="typed"><span id="c-plan-text" data-full="1. Pay the rent.&#10;2. Get out."></span><span id="c-plan-cursor" class="cursor"></span></div>
+      </div>
+    </div>
+
+    <!-- 21.2 "Your phone lights up. Your rider is calling again and again." -->
+    <div id="c-call" class="clip card" data-start="21.16" data-duration="4.96">
+      <div class="card-box">
+        <div class="card-label"><span id="c-call-dot" class="call-dot"></span>Incoming call</div>
+        <div class="card-value">LAST RIDER</div>
+        <div class="card-sub">
+          Missed calls:
+          <span class="red" style="position: relative; display: inline-block; min-width: 30px"
+            ><span id="c-miss-1">1</span><span id="c-miss-2" class="swap">2</span><span id="c-miss-3" class="swap">3</span
+            ><span id="c-miss-4" class="swap">4</span></span
+          >
+        </div>
+        <div class="card-bar"></div>
+      </div>
+    </div>
+
+    <!-- 26.16 "You dig to the bottom. Under the cash, a black ski mask, then a text." -->
+    <div id="c-mask" class="clip card" data-start="26.12" data-duration="5.64">
+      <div id="c-mask-box" class="card-box">
+        <div class="card-label">Bottom of the bag</div>
+        <div class="card-value"><span id="c-mask-old">? ? ?</span><span id="c-mask-new" class="swap red">BLACK SKI MASK</span></div>
+        <div id="c-mask-sub" class="card-sub">+1 new message</div>
+        <div class="card-bar"></div>
+      </div>
+    </div>
+
+    <!-- 31.8 "Wear the mask, 4 a.m." -->
+    <div id="c-msg" class="clip card card-text" data-start="31.8" data-duration="4.2">
+      <div class="card-box">
+        <div class="card-label"><span class="tick"></span>Unknown sender</div>
+        <div class="typed"><span id="c-msg-text" data-full="Wear the mask. 4 A.M."></span><span id="c-msg-cursor" class="cursor"></span></div>
+      </div>
+    </div>
+    <!-- 34.28 THE TWIST: "I know where you sleep." -->
+    <div id="c-msg2" class="clip card card-low card-text card-red" data-start="34.28" data-duration="1.72" data-slam style="top: 470px">
+      <div id="c-msg2-box" class="card-box">
+        <div class="typed" style="margin-top: 0">I know where you sleep.</div>
+      </div>
+    </div>
+
+    <!-- 36.04 "Do you take the mask or walk away?" -->
+    <div id="c-clock" class="clip card" data-start="36.0" data-duration="2.56">
+      <div class="card-box">
+        <div class="card-label">Current time</div>
+        <div class="card-value">11:52 P.M.</div>
+        <div class="card-sub red">Deadline: 4 A.M.</div>
+      </div>
+    </div>
+    <div id="c-left" class="clip card card-low" data-start="36.5" data-duration="2.06">
+      <div class="card-box">
+        <div class="card-label">Time remaining</div>
+        <div class="card-value">4 HRS 8 MIN</div>
+        <div class="card-sub">Left to decide</div>
+        <div class="card-bar"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    // Every card: drop in from above, draw its underline, fade out just before its end.
+    document.querySelectorAll("#root .card").forEach((card) => {
+      const start = parseFloat(card.dataset.start);
+      const end = start + parseFloat(card.dataset.duration);
+      const box = card.querySelector(".card-box");
+      if (start > 0 && !card.hasAttribute("data-slam")) {
+        tl.fromTo(box, { y: -36, opacity: 0 }, { y: 0, opacity: 1, duration: 0.24, ease: "power3.out" }, start);
+      }
+      const bar = card.querySelector(".card-bar");
+      if (bar) tl.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power2.out" }, start + 0.1);
+      if (end < 43) tl.to(box, { opacity: 0, duration: 0.1, ease: "power1.in" }, end - 0.1);
+    });
+
+    // Counting value: numeric tween drives the text, so every seek lands on the same number.
+    function count(sel, to, start, dur, fmt) {
+      const el = document.querySelector(sel);
+      const o = { v: 0 };
+      el.textContent = fmt(0);
+      tl.fromTo(
+        o,
+        { v: 0 },
+        { v: to, duration: dur, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) },
+        start,
+      );
+    }
+    // Typewriter: the full text lives in data-full; a tweened index slices it.
+    function type(sel, cursorSel, start, dur, until) {
+      const el = document.querySelector(sel);
+      const full = el.dataset.full;
+      const o = { n: 0 };
+      el.textContent = "";
+      tl.fromTo(
+        o,
+        { n: 0 },
+        { n: full.length, duration: dur, ease: "none", onUpdate: () => (el.textContent = full.slice(0, Math.round(o.n))) },
+        start,
+      );
+      const blinks = Math.max(1, Math.floor((until - start) / 0.5));
+      tl.fromTo(
+        cursorSel,
+        { opacity: 1 },
+        { keyframes: { opacity: [1, 1, 0, 0] }, duration: 0.5, ease: "none", repeat: blinks - 1 },
+        start,
+      );
+    }
+    function swap(oldSel, newSel, t) {
+      tl.fromTo(oldSel, { opacity: 1 }, { opacity: 0, duration: 0.05 }, t);
+      tl.fromTo(newSel, { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2)" }, t);
+    }
+    function pulse(sel, t) {
+      tl.fromTo(sel, { scale: 1 }, { keyframes: { scale: [1, 1.07, 1] }, duration: 0.3, ease: "power2.out", immediateRender: false }, t);
+    }
+    function fadeIn(sel, t) {
+      tl.fromTo(sel, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, t);
+    }
+
+    const money = (v) => "$" + (Math.round(v / 100) * 100).toLocaleString("en-US");
+    count("#c-found-val", 100000, 0.1, 2.0, money);
+    pulse("#c-found .card-box", 2.1);
+    fadeIn("#c-found-sub", 2.58);
+
+    fadeIn("#c-rider-sub", 5.48);
+
+    count("#c-rent-val", 3, 10.85, 0.6, (v) => String(Math.round(v)));
+    pulse("#c-rent .card-box", 11.45);
+
+    swap("#c-door-old", "#c-door-new", 14.95);
+    fadeIn("#c-door-sub", 15.2);
+    pulse("#c-door-box", 14.95);
+    tl.fromTo("#c-door-box", { borderColor: "rgba(74,222,128,0.85)" }, { borderColor: "rgba(255,74,74,0.95)", duration: 0.1, immediateRender: false }, 14.95);
+    tl.fromTo("#c-door .card-bar", { backgroundColor: "#4ade80" }, { backgroundColor: "#ff4a4a", duration: 0.1, immediateRender: false }, 14.95);
+
+    count("#c-years-val", 48, 16.8, 0.9, (v) => String(Math.round(v)));
+    fadeIn("#c-years-sub", 17.33);
+
+    type("#c-plan-text", "#c-plan-cursor", 19.15, 0.9, 21.16);
+
+    tl.fromTo("#c-call-dot", { scale: 1 }, { keyframes: { scale: [1, 1.5, 1] }, duration: 0.6, ease: "sine.inOut", repeat: 7 }, 21.2);
+    swap("#c-miss-1", "#c-miss-2", 22.62);
+    tl.fromTo("#c-miss-2", { opacity: 1 }, { opacity: 0, duration: 0.05, immediateRender: false }, 24.05);
+    tl.fromTo("#c-miss-3", { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2)" }, 24.05);
+    tl.fromTo("#c-miss-3", { opacity: 1 }, { opacity: 0, duration: 0.05, immediateRender: false }, 25.06);
+    tl.fromTo("#c-miss-4", { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2)" }, 25.06);
+
+    swap("#c-mask-old", "#c-mask-new", 28.98);
+    pulse("#c-mask-box", 28.98);
+    tl.fromTo("#c-mask-box", { borderColor: "rgba(74,222,128,0.85)" }, { borderColor: "rgba(255,74,74,0.95)", duration: 0.1, immediateRender: false }, 28.98);
+    tl.fromTo("#c-mask .card-bar", { backgroundColor: "#4ade80" }, { backgroundColor: "#ff4a4a", duration: 0.1, immediateRender: false }, 28.98);
+    fadeIn("#c-mask-sub", 30.3);
+
+    type("#c-msg-text", "#c-msg-cursor", 31.88, 1.0, 36.0);
+
+    // the twist line slams in instead of typing
+    tl.fromTo("#c-msg2-box", { scale: 1.18, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.16, ease: "power4.out" }, 34.28);
+    tl.fromTo(
+      "#c-msg2-box",
+      { x: 0 },
+      { keyframes: { x: [0, 18, -16, 12, -8, 4, 0] }, duration: 0.4, ease: "none", immediateRender: false },
+      34.28,
+    );
+
+    window.__timelines["cards"] = tl;
+  </script>
+</template>
